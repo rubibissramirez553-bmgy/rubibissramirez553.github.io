@@ -1,0 +1,51 @@
+#include "crow_all.h"
+#include <string>
+
+int main() {
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/api/registro")
+        .methods(crow::HTTPMethod::POST)
+        ([](const crow::request& req) {
+            auto datos = crow::json::load(req.body);
+
+            if (!datos ||
+                !datos.has("correo") ||
+                !datos.has("contrasena")) {
+                return crow::response(
+                    400,
+                    R"({"ok":false,"mensaje":"Datos incompletos"})"
+                );
+            }
+
+            std::string correo = datos["correo"].s();
+            std::string contrasena = datos["contrasena"].s();
+
+            if (correo.empty() || contrasena.length() < 6) {
+                return crow::response(
+                    400,
+                    R"({"ok":false,"mensaje":"Datos no válidos"})"
+                );
+            }
+
+            // La contraseña debe cifrarse antes de almacenarse.
+            // Aquí se conectaría una base de datos.
+
+            crow::json::wvalue respuesta;
+            respuesta["ok"] = true;
+            respuesta["mensaje"] = "Cuenta creada correctamente";
+            respuesta["correo"] = correo;
+
+            return crow::response(201, respuesta);
+        });
+
+    CROW_ROUTE(app, "/api/productos")
+        ([]() {
+            crow::json::wvalue respuesta;
+            respuesta["mensaje"] =
+                "Aquí se consultarían los productos de la base de datos";
+            return crow::response(respuesta);
+        });
+
+    app.port(8080).multithreaded().run();
+} 

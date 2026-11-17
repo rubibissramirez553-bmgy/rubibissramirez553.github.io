@@ -1,0 +1,2737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neko Kitchen</title>
+
+  <style>
+    :root {
+      --rojo: #bb171d;
+      --rojo-oscuro: #7b0e13;
+      --negro: #17130f;
+      --blanco: #fffaf1;
+      --crema: #f6ead5;
+      --dorado: #c99645;
+      --gris: #706960;
+      --sombra: 0 12px 28px rgba(23, 19, 15, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--negro);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(187, 23, 29, 0.08), transparent 30%),
+        var(--blanco);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .pantalla {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .pantalla.activa {
+      display: block;
+    }
+
+    .contenedor {
+      width: min(1180px, 92%);
+      margin: auto;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 40px 20px;
+      text-align: center;
+      color: white;
+      background:
+        linear-gradient(rgba(20, 13, 10, 0.8), rgba(20, 13, 10, 0.88)),
+        repeating-linear-gradient(
+          45deg,
+          transparent 0 24px,
+          rgba(187, 23, 29, 0.16) 24px 48px
+        );
+    }
+
+    .hero-contenido {
+      max-width: 720px;
+    }
+
+    .logo {
+      width: min(330px, 70vw);
+      margin: 0 auto 20px;
+      border: 6px solid var(--dorado);
+      border-radius: 50%;
+      box-shadow: 0 0 0 12px rgba(255, 255, 255, 0.08);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: clamp(2.8rem, 8vw, 5.8rem);
+      letter-spacing: 5px;
+    }
+
+    .hero p {
+      margin: 14px 0 28px;
+      color: var(--crema);
+      font-size: 1.25rem;
+    }
+
+    .boton {
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      background: var(--rojo);
+      font-weight: bold;
+      box-shadow: 0 5px 0 var(--rojo-oscuro);
+      transition: 0.2s;
+    }
+
+    .boton:hover {
+      transform: translateY(-2px);
+      background: #d02027;
+    }
+
+    .boton:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 var(--rojo-oscuro);
+    }
+
+    .boton.secundario {
+      color: var(--negro);
+      background: var(--crema);
+      box-shadow: 0 5px 0 #cdbb9d;
+    }
+
+    .boton.peligro {
+      background: #671116;
+      box-shadow: 0 5px 0 #38070a;
+    }
+
+    .boton.enlace {
+      padding: 8px 12px;
+      color: var(--rojo);
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .panel-centrado {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 30px 16px;
+    }
+
+    .tarjeta-formulario {
+      width: min(480px, 100%);
+      padding: 32px;
+      border-top: 7px solid var(--rojo);
+      border-radius: 18px;
+      background: white;
+      box-shadow: var(--sombra);
+    }
+
+    .tarjeta-formulario h2 {
+      margin-top: 0;
+      font-family: Georgia, serif;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 6px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cfc4b5;
+      border-radius: 7px;
+      background: #fffefa;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 3px solid rgba(187, 23, 29, 0.16);
+      border-color: var(--rojo);
+    }
+
+    .form-acciones {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .encabezado {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      color: white;
+      background: var(--negro);
+      border-bottom: 4px solid var(--rojo);
+    }
+
+    .barra {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .marca img {
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border: 2px solid var(--dorado);
+      border-radius: 50%;
+    }
+
+    .buscador {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .buscador input {
+      border: 0;
+    }
+
+    .acciones-superiores {
+      display: flex;
+      gap: 8px;
+    }
+
+    .acciones-superiores button {
+      min-width: 44px;
+      padding: 10px;
+      border: 1px solid #534a40;
+      border-radius: 8px;
+      color: white;
+      background: #2b241e;
+    }
+
+    .contador {
+      display: inline-grid;
+      min-width: 20px;
+      height: 20px;
+      place-items: center;
+      margin-left: 4px;
+      border-radius: 50%;
+      background: var(--rojo);
+      font-size: 0.75rem;
+    }
+
+    main {
+      padding: 38px 0 70px;
+    }
+
+    .titulo-seccion {
+      text-align: center;
+    }
+
+    .titulo-seccion h2 {
+      margin-bottom: 8px;
+      color: var(--rojo-oscuro);
+      font-family: Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    .titulo-seccion p {
+      color: var(--gris);
+    }
+
+    .categorias {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+      margin-top: 35px;
+    }
+
+    .categoria {
+      position: relative;
+      min-height: 260px;
+      overflow: hidden;
+      padding: 24px;
+      border: 0;
+      border-radius: 18px;
+      color: white;
+      background: var(--negro);
+      box-shadow: var(--sombra);
+      text-align: left;
+      transition: 0.25s;
+    }
+
+    .categoria:hover {
+      transform: translateY(-7px);
+    }
+
+    .categoria::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.32;
+      background:
+        radial-gradient(circle at 70% 20%, var(--rojo), transparent 35%),
+        repeating-linear-gradient(
+          135deg,
+          transparent 0 20px,
+          rgba(255, 255, 255, 0.08) 20px 22px
+        );
+    }
+
+    .categoria-contenido {
+      position: relative;
+      z-index: 1;
+    }
+
+    .categoria .kanji {
+      display: block;
+      margin-bottom: 42px;
+      color: var(--dorado);
+      font-size: 3.3rem;
+    }
+
+    .categoria h3 {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+
+    .categoria p {
+      color: #eee1d0;
+    }
+
+    .subtitulo-catalogo {
+      margin: 40px 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid var(--rojo);
+      font-family: Georgia, serif;
+    }
+
+    .productos {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .producto {
+      overflow: hidden;
+      border: 1px solid #e3d8c8;
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 8px 18px rgba(40, 28, 19, 0.1);
+    }
+
+    .producto-imagen {
+      position: relative;
+      height: 145px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--dorado);
+      background:
+        linear-gradient(135deg, #201a15, #4f1518);
+      font-size: 3rem;
+    }
+
+    .producto-imagen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .producto-info {
+      padding: 15px;
+    }
+
+    .producto h4 {
+      min-height: 43px;
+      margin: 0 0 8px;
+    }
+
+    .producto p {
+      min-height: 54px;
+      margin: 0 0 10px;
+      color: var(--gris);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .precio {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--rojo);
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .producto-acciones {
+      display: flex;
+      gap: 8px;
+    }
+
+    .producto-acciones .boton {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 6px;
+      font-size: 0.86rem;
+    }
+
+    .volver {
+      margin-bottom: 24px;
+    }
+
+    .detalle {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 35px;
+      padding: 28px;
+      border-radius: 18px;
+      background: white;
+      box-shadow: var(--sombra);
+    }
+
+    .detalle-imagen {
+      min-height: 410px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 14px;
+      color: var(--dorado);
+      background: linear-gradient(145deg, #17130f, #74151a);
+      font-size: 7rem;
+    }
+
+    .detalle-imagen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detalle h2 {
+      font-family: Georgia, serif;
+      font-size: 2.3rem;
+    }
+
+    .detalle-descripcion {
+      color: var(--gris);
+      line-height: 1.7;
+    }
+
+    .existencia {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 20px;
+      color: #165b32;
+      background: #d9f5e2;
+      font-weight: bold;
+    }
+
+    .agotado {
+      color: #80151b;
+      background: #f7d9db;
+    }
+
+    .opciones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .detalle-botones {
+      display: flex;
+      gap: 12px;
+    }
+
+    .resumen {
+      display: grid;
+      grid-template-columns: 1.6fr 0.8fr;
+      gap: 25px;
+    }
+
+    .lista-carrito,
+    .totales,
+    .panel {
+      padding: 24px;
+      border-radius: 16px;
+      background: white;
+      box-shadow: var(--sombra);
+    }
+
+    .item-carrito {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 0;
+      border-bottom: 1px solid #eadfce;
+    }
+
+    .miniatura {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 10px;
+      color: var(--dorado);
+      background: var(--negro);
+      font-size: 1.8rem;
+    }
+
+    .miniatura img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cantidad {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .cantidad button {
+      width: 28px;
+      height: 28px;
+      border: 0;
+      border-radius: 5px;
+      background: var(--crema);
+    }
+
+    .totales .linea {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+    }
+
+    .totales .total {
+      margin-top: 10px;
+      padding-top: 15px;
+      border-top: 2px solid var(--negro);
+      color: var(--rojo);
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .totales .boton {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .rejilla-formulario {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px 18px;
+    }
+
+    .campo-completo {
+      grid-column: 1 / -1;
+    }
+
+    .metodos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    .metodo {
+      padding: 25px;
+      border: 2px solid #d7c8b5;
+      border-radius: 14px;
+      background: white;
+      text-align: center;
+    }
+
+    .metodo.seleccionado {
+      border-color: var(--rojo);
+      background: #fff2f0;
+    }
+
+    .pago-oculto {
+      display: none;
+    }
+
+    .pago-oculto.visible {
+      display: block;
+    }
+
+    .qr {
+      width: 190px;
+      height: 190px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin: 20px auto;
+      padding: 12px;
+      background: white;
+      border: 4px solid var(--negro);
+    }
+
+    .qr span:nth-child(3n),
+    .qr span:nth-child(5n) {
+      background: var(--negro);
+    }
+
+    .codigo {
+      padding: 14px;
+      border: 2px dashed var(--rojo);
+      text-align: center;
+      font-family: monospace;
+      font-size: 1.4rem;
+      letter-spacing: 3px;
+    }
+
+    .confirmacion {
+      max-width: 650px;
+      margin: 60px auto;
+      padding: 45px;
+      border-radius: 18px;
+      background: white;
+      box-shadow: var(--sombra);
+      text-align: center;
+    }
+
+    .confirmacion .icono {
+      width: 100px;
+      height: 100px;
+      display: grid;
+      place-items: center;
+      margin: auto;
+      border-radius: 50%;
+      color: white;
+      background: #278548;
+      font-size: 3rem;
+    }
+
+    .seguimiento {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin: 30px 0;
+    }
+
+    .paso {
+      position: relative;
+      text-align: center;
+    }
+
+    .paso::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      top: 18px;
+      left: 50%;
+      width: 100%;
+      height: 4px;
+      background: #ddd0bf;
+    }
+
+    .paso:last-child::after {
+      display: none;
+    }
+
+    .paso span {
+      position: relative;
+      z-index: 1;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      margin: auto;
+      border-radius: 50%;
+      background: #ddd0bf;
+    }
+
+    .paso.activo span {
+      color: white;
+      background: var(--rojo);
+    }
+
+    .mensaje-vacio {
+      padding: 35px;
+      color: var(--gris);
+      text-align: center;
+    }
+
+    .nota {
+      padding: 12px;
+      border-left: 4px solid var(--dorado);
+      background: var(--crema);
+      color: #4d4236;
+    }
+
+    footer {
+      padding: 25px;
+      color: #d8cbb9;
+      background: var(--negro);
+      text-align: center;
+    }
+
+    @media (max-width: 1050px) {
+      .categorias,
+      .productos {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .barra {
+        flex-wrap: wrap;
+        padding: 12px 0;
+      }
+
+      .buscador {
+        order: 3;
+        flex-basis: 100%;
+      }
+
+      .categorias,
+      .productos {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .detalle,
+      .resumen,
+      .rejilla-formulario,
+      .opciones {
+        grid-template-columns: 1fr;
+      }
+
+      .campo-completo {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .categorias,
+      .productos,
+      .metodos {
+        grid-template-columns: 1fr;
+      }
+
+      .acciones-superiores button {
+        font-size: 0;
+      }
+
+      .acciones-superiores button span {
+        font-size: 1rem;
+      }
+
+      .detalle-botones,
+      .form-acciones {
+        flex-direction: column;
+      }
+    }
+
+
+    .bienvenida-layout {
+      width: min(1120px, 100%);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: clamp(28px, 5vw, 64px);
+      text-align: center;
+    }
+    .hero-contenido { max-width: 100%; }
+    .historia {
+      max-width: 560px;
+      margin: 22px auto 0;
+      color: #eadfce;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    .eslogan {
+      display: inline-block;
+      margin: 18px 0 0;
+      padding: 10px 18px;
+      border: 1px solid var(--dorado);
+      border-radius: 30px;
+      color: #f5d69f;
+      font-weight: bold;
+      letter-spacing: .4px;
+    }
+
+.login-card { text-align: left; }
+    .login-card h2 {
+  margin-bottom: 8px;
+  color: var(--negro);
+}
+
+.login-card p {
+  color: var(--negro);
+}
+
+.login-card label {
+  color: var(--negro);
+}
+
+.texto-registro {
+  margin: 20px 0 0;
+  text-align: left;
+  color: var(--negro);
+  font-weight: 500;
+}
+    .texto-registro button {
+      padding: 0;
+      border: 0;
+      color: var(--rojo);
+      background: transparent;
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .auth-volver {
+      display: block;
+      margin: 18px auto 0;
+    }
+    @media (max-width: 760px) {
+      .bienvenida-layout { grid-template-columns: 1fr; }
+      .hero { padding: 34px 18px; }
+      .logo { width: min(230px, 60vw); }
+      .tarjeta-formulario { padding: 24px; }
+    }
+
+    .cuenta-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.4fr);
+      gap: 22px;
+      margin-top: 30px;
+      align-items: start;
+    }
+
+    .cuenta-perfil, .cuenta-compras {
+      padding: 26px;
+      border-radius: 16px;
+      background: white;
+      box-shadow: var(--sombra);
+    }
+
+    .cuenta-perfil .boton {
+      margin-top: 18px;
+    }
+
+    .avatar-contenedor {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .foto-perfil {
+      width: 132px;
+      height: 132px;
+      object-fit: cover;
+      border: 4px solid var(--dorado);
+      border-radius: 50%;
+      background: var(--crema);
+    }
+
+    .cuenta-perfil input[type="file"] {
+      padding: 8px;
+      font-size: 0.9rem;
+    }
+
+    .nota-cuenta {
+      color: var(--gris);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .compra-historica {
+      padding: 16px 0;
+      border-bottom: 1px solid #e3d8c8;
+    }
+
+    .compra-historica:last-child {
+      border-bottom: 0;
+    }
+
+    .compra-historica h4 {
+      margin: 0 0 8px;
+      color: var(--rojo-oscuro);
+    }
+
+    .compra-historica p {
+      margin: 5px 0;
+      color: var(--gris);
+      line-height: 1.5;
+    }
+
+    .estado-compra {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 9px;
+      border-radius: 20px;
+      color: #245b37;
+      background: #e4f3e8;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    @media (max-width: 760px) {
+      .cuenta-layout {
+        grid-template-columns: 1fr;
+      }
+      .acciones-superiores {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .acciones-superiores button {
+        font-size: 0.78rem;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <section id="bienvenida" class="pantalla activa">
+    <div class="hero">
+      <div class="bienvenida-layout">
+        <div class="hero-contenido">
+          <img class="logo" src="logo-neko.png" alt="Logotipo de Neko Kitchen">
+          <h1>Neko Kitchen</h1>
+          <p class="eslogan">"Un mundo de sabores, una experiencia en cada bocado."</p>
+          <p class="historia">
+            Neko Kitchen nació con la idea de acercar la riqueza y diversidad de la
+            gastronomía asiática a más personas. Creamos este espacio para reunir
+            platillos, bebidas y postres tradicionales de distintos países de Asia,
+            celebrando sus ingredientes, costumbres y formas únicas de compartir la mesa.
+          </p>
+        </div>
+
+        <form class="tarjeta-formulario login-card" id="formLogin">
+          <h2>Inicia sesión</h2>
+          <p>Ingresa a tu cuenta para descubrir el menú de Neko Kitchen.</p>
+          <label for="loginUsuario">Nombre de usuario o correo</label>
+          <input id="loginUsuario" type="text" autocomplete="username"
+                 placeholder="Usuario o correo electrónico" required>
+          <label for="loginContrasena">Contraseña</label>
+          <input id="loginContrasena" type="password" autocomplete="current-password"
+                 placeholder="Tu contraseña" required>
+          <div class="form-acciones">
+            <button class="boton" type="submit">Iniciar sesión</button>
+          </div>
+          <p class="texto-registro">¿No tienes cuenta?
+            <button type="button" onclick="mostrarPantalla('registro')">Créala ya</button>
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="registro" class="pantalla">
+    <div class="panel-centrado">
+      <form class="tarjeta-formulario" id="formRegistro">
+        <h2>Crear una cuenta</h2>
+        <p>Completa tus datos para formar parte de Neko Kitchen.</p>
+
+        <label for="nombreCuenta">Nombre completo</label>
+        <input id="nombreCuenta" type="text" maxlength="60"
+               autocomplete="name" placeholder="Nombre y apellidos" required>
+
+        <label for="usuarioCuenta">Nombre de usuario</label>
+        <input id="usuarioCuenta" type="text" maxlength="24" minlength="3"
+               autocomplete="username" placeholder="Elige un nombre de usuario" required>
+
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" type="email" autocomplete="email"
+               placeholder="nombre@correo.com" required>
+
+        <label for="contrasena">Contraseña</label>
+        <input id="contrasena" type="password" minlength="8"
+               autocomplete="new-password" placeholder="Mínimo 8 caracteres" required>
+
+        <label for="confirmarContrasena">Confirmar contraseña</label>
+        <input id="confirmarContrasena" type="password" minlength="8"
+               autocomplete="new-password" placeholder="Repite tu contraseña" required>
+
+        <div class="form-acciones">
+          <button class="boton" type="submit">Crear cuenta</button>
+          <button class="boton secundario" type="button"
+                  onclick="mostrarPantalla('bienvenida')">Regresar al inicio</button>
+        </div>
+        <p class="texto-registro">
+          <button type="button" onclick="mostrarPantalla('bienvenida')"></button>
+        </p>
+        <p class="nota-cuenta"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="principal" class="pantalla">
+    <header class="encabezado">
+      <div class="contenedor barra">
+        <div class="marca">
+          <img src="logo-neko.png" alt="">
+          Neko Kitchen
+        </div>
+
+        <div class="buscador">
+          <input
+            id="busqueda"
+            type="search"
+            placeholder="Buscar ramen, sushi, té..."
+          >
+        </div>
+
+        <div class="acciones-superiores">
+          <button onclick="mostrarSeguimiento()" title="Seguimiento">
+            <span>📦</span> Seguimiento
+          </button>
+
+          <button onclick="abrirCuenta()" title="Mi cuenta">
+            <span>👤</span> Mi cuenta
+          </button>
+
+          <button onclick="abrirCarrito()" title="Carrito">
+            <span>🛒</span> Carrito
+            <b class="contador" id="contadorCarrito">0</b>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="contenedor">
+      <div class="titulo-seccion">
+        <h2>Un viaje por Asia</h2>
+        <p>Selecciona una cultura gastronómica para conocer su menú.</p>
+      </div>
+
+      <div class="categorias">
+        <button class="categoria" onclick="abrirCategoria('China')">
+          <span class="categoria-contenido">
+            <span class="kanji">中</span>
+            <h3>Comida china</h3>
+            <p>Sabores intensos, contrastes y tradición.</p>
+          </span>
+        </button>
+
+        <button class="categoria" onclick="abrirCategoria('Japón')">
+          <span class="categoria-contenido">
+            <span class="kanji">日</span>
+            <h3>Comida japonesa</h3>
+            <p>Equilibrio, frescura y presentación.</p>
+          </span>
+        </button>
+
+        <button class="categoria" onclick="abrirCategoria('Corea')">
+          <span class="categoria-contenido">
+            <span class="kanji">韓</span>
+            <h3>Comida coreana</h3>
+            <p>Picante, fermentación y sabor casero.</p>
+          </span>
+        </button>
+
+        <button class="categoria" onclick="abrirCategoria('Tailandia')">
+          <span class="categoria-contenido">
+            <span class="kanji">泰</span>
+            <h3>Comida tailandesa</h3>
+            <p>Dulce, ácido, salado y picante.</p>
+          </span>
+        </button>
+
+        <button class="categoria" onclick="abrirCategoria('Vietnam')">
+          <span class="categoria-contenido">
+            <span class="kanji">越</span>
+            <h3>Comida vietnamita</h3>
+            <p>Hierbas frescas, caldos y aromas.</p>
+          </span>
+        </button>
+      </div>
+
+      <div id="resultadosBusqueda"></div>
+    </main>
+
+    <footer>
+      Neko Kitchen 
+    </footer>
+  </section>
+
+  <section id="cuenta" class="pantalla">
+    <main class="contenedor">
+      <button class="boton secundario volver" onclick="mostrarPantalla('principal')">
+        ← Volver a categorías
+      </button>
+
+      <div class="titulo-seccion">
+        <h2>Mi cuenta</h2>
+        <p>Administra tu perfil y consulta tus compras en Neko Kitchen.</p>
+      </div>
+
+      <div class="cuenta-layout">
+        <section class="panel cuenta-perfil">
+          <div class="avatar-contenedor">
+            <img id="fotoPerfil" class="foto-perfil" alt="Foto de perfil"
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f6ead5'/%3E%3Ctext x='60' y='77' font-size='58' text-anchor='middle'%3E👤%3C/text%3E%3C/svg%3E">
+          </div>
+          <label for="subirFotoPerfil">Foto de perfil</label>
+          <input id="subirFotoPerfil" type="file" accept="image/*">
+          <label for="editarNombreCuenta">Nombre de cuenta</label>
+          <input id="editarNombreCuenta" type="text" maxlength="40" placeholder="Tu nombre">
+          <label for="correoCuenta">Correo electrónico</label>
+          <input id="correoCuenta" type="email" readonly>
+          <button class="boton" type="button" onclick="guardarPerfil()">Guardar cambios</button>
+          <p class="nota-cuenta"></p>
+        </section>
+
+        <section class="panel cuenta-compras">
+          <h3>Mis compras</h3>
+          <p>Consulta el historial de pedidos que has completado.</p>
+          <div id="historialCompras"></div>
+        </section>
+      </div>
+    </main>
+  </section>
+
+  <section id="catalogo" class="pantalla">
+    <header class="encabezado">
+      <div class="contenedor barra">
+        <div class="marca">
+          <img src="logo-neko.png" alt="">
+          Neko Kitchen
+        </div>
+
+        <div class="buscador">
+          <input
+            id="busquedaCatalogo"
+            type="search"
+            placeholder="Buscar en esta categoría..."
+          >
+        </div>
+
+        <div class="acciones-superiores">
+          <button onclick="mostrarPantalla('principal')">
+            <span>🏠</span> Inicio
+          </button>
+
+          <button onclick="abrirCarrito()">
+            <span>🛒</span>
+            <b class="contador contador-carrito">0</b>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="contenedor">
+      <button
+        class="boton secundario volver"
+        onclick="mostrarPantalla('principal')"
+      >
+        ← Volver a categorías
+      </button>
+
+      <div class="titulo-seccion">
+        <h2 id="tituloCatalogo">Menú</h2>
+        <p>Platillos, bebidas y postres tradicionales.</p>
+        <p class="nota"></p>
+      </div>
+
+      <div id="contenidoCatalogo"></div>
+    </main>
+  </section>
+
+  <section id="detalleProducto" class="pantalla">
+    <main class="contenedor">
+      <button
+        class="boton secundario volver"
+        onclick="mostrarPantalla('catalogo')"
+      >
+        ← Regresar al menú
+      </button>
+      <div id="detalleContenido"></div>
+    </main>
+  </section>
+
+  <section id="carrito" class="pantalla">
+    <main class="contenedor">
+      <button
+        class="boton secundario volver"
+        onclick="mostrarPantalla('principal')"
+      >
+        ← Seguir comprando
+      </button>
+
+      <div class="titulo-seccion">
+        <h2>Tu carrito</h2>
+        <p>Revisa los productos antes de continuar.</p>
+      </div>
+
+      <div class="resumen">
+        <div class="lista-carrito" id="listaCarrito"></div>
+        <aside class="totales" id="resumenTotales"></aside>
+      </div>
+    </main>
+  </section>
+
+  <section id="datosEntrega" class="pantalla">
+    <main class="contenedor">
+      <div class="panel">
+        <div class="titulo-seccion">
+          <h2>Datos de entrega</h2>
+          <p>Ingresa la información necesaria para entregar tu pedido.</p>
+        </div>
+
+        <form id="formEntrega">
+          <div class="rejilla-formulario">
+            <div>
+              <label>Nombre</label>
+              <input required>
+            </div>
+
+            <div>
+              <label>Apellidos</label>
+              <input required>
+            </div>
+
+            <div>
+              <label>Número telefónico</label>
+              <input type="tel" pattern="[0-9]{10}" required>
+            </div>
+
+            <div>
+              <label>Colonia</label>
+              <input required>
+            </div>
+
+            <div>
+              <label>Calle</label>
+              <input required>
+            </div>
+
+            <div>
+              <label>Código postal</label>
+              <input inputmode="numeric" pattern="[0-9]{5}" required>
+            </div>
+
+            <div>
+              <label>Número de casa</label>
+              <input required>
+            </div>
+
+            <div class="campo-completo">
+              <label>Referencia de la vivienda</label>
+              <textarea
+                rows="3"
+                placeholder="Color de fachada, calles cercanas, etc."
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-acciones">
+            <button class="boton" type="submit">Continuar al pago</button>
+            <button
+              class="boton secundario"
+              type="button"
+              onclick="abrirCarrito()"
+            >
+              Volver
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </section>
+
+  <section id="pago" class="pantalla">
+    <main class="contenedor">
+      <div class="panel">
+        <div class="titulo-seccion">
+          <h2>Método de pago</h2>
+          <p>Selecciona cómo deseas pagar tu compra.</p>
+        </div>
+
+        <div class="metodos">
+          <button class="metodo" id="metodoTarjeta" onclick="elegirPago('tarjeta')">
+            <h3>💳 Tarjeta</h3>
+            <p>Pago inmediato con tarjeta bancaria.</p>
+          </button>
+
+          <button class="metodo" id="metodoOxxo" onclick="elegirPago('oxxo')">
+            <h3>🏪 Tienda OXXO</h3>
+            <p>Genera un código para pagar en efectivo.</p>
+          </button>
+        </div>
+
+        <div id="pagoTarjeta" class="pago-oculto">
+          <form id="formTarjeta">
+            <div class="rejilla-formulario">
+              <div class="campo-completo">
+                <label>Número de tarjeta</label>
+                <input
+                  inputmode="numeric"
+                  maxlength="19"
+                  placeholder="0000 0000 0000 0000"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>Fecha de vencimiento</label>
+                <input type="month" required>
+              </div>
+
+              <div>
+                <label>CVV</label>
+                <input
+                  type="password"
+                  inputmode="numeric"
+                  minlength="3"
+                  maxlength="4"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>NIP</label>
+                <input
+                  type="password"
+                  inputmode="numeric"
+                  minlength="4"
+                  maxlength="4"
+                  required
+                >
+              </div>
+            </div>
+
+            <p class="nota">
+              Demostración escolar: no ingreses datos bancarios reales.
+            </p>
+
+            <button class="boton" type="submit">Confirmar pago</button>
+          </form>
+        </div>
+
+        <div id="pagoOxxo" class="pago-oculto">
+          <div class="codigo" id="codigoOxxo"></div>
+          <div class="qr" id="qr"></div>
+
+          <p>
+            Tiempo restante para pagar:
+            <strong id="temporizador">02:00:00</strong>
+          </p>
+
+          <label>Reingresa el código después de realizar el pago</label>
+          <input id="confirmarCodigo" placeholder="Código de compra">
+
+          <button class="boton" onclick="confirmarOxxo()">
+            Confirmar pago
+          </button>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <section id="confirmacion" class="pantalla">
+    <div class="confirmacion">
+      <div class="icono">✓</div>
+      <h2>¡Compra realizada con éxito!</h2>
+      <p>
+        Tu pedido ha sido registrado. Puedes consultar su avance desde
+        la sección de seguimiento.
+      </p>
+
+      <button class="boton" onclick="finalizarCompra()">
+        Volver a las categorías
+      </button>
+    </div>
+  </section>
+
+  <section id="rastreo" class="pantalla">
+    <main class="contenedor">
+      <button
+        class="boton secundario volver"
+        onclick="mostrarPantalla('principal')"
+      >
+        ← Volver
+      </button>
+
+      <div class="panel">
+        <div class="titulo-seccion">
+          <h2>Seguimiento del pedido</h2>
+          <p id="textoSeguimiento">Consulta el estado de tu compra.</p>
+        </div>
+
+        <div class="seguimiento">
+          <div class="paso activo">
+            <span>1</span>
+            <p>Pedido recibido</p>
+          </div>
+
+          <div class="paso">
+            <span>2</span>
+            <p>En preparación</p>
+          </div>
+
+          <div class="paso">
+            <span>3</span>
+            <p>En camino</p>
+          </div>
+
+          <div class="paso">
+            <span>4</span>
+            <p>Entregado</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+  <script>
+    const menus = {
+  "China": {
+    "kanji": "中",
+    "principales": [
+      [
+        "Pato laqueado a la pekinesa",
+        198,
+        "Pato asado con piel dorada y crujiente, acompañado de salsa hoisin y vegetales frescos.",
+        "Especialidad clásica de Pekín preparada con pato sazonado y asado lentamente hasta lograr una piel fina, brillante y crujiente. Se sirve tradicionalmente en rebanadas, con crepas delgadas, cebollín, pepino y salsa hoisin para combinar cada bocado."
+      ],
+      [
+        "Dumplings (Jiaozi)",
+        145,
+        "Empanadillas de masa suave rellenas de carne y verduras.",
+        "Pequeñas piezas de masa elaboradas con harina y agua, rellenas de una mezcla sazonada que puede incluir carne molida, col y cebollín. Se cuecen al vapor, hervidas o doradas en sartén y suelen acompañarse con salsa de soya y vinagre."
+      ],
+      [
+        "Pollo Kung Pao",
+        139,
+        "Pollo salteado con cacahuates, verduras y un toque de chile.",
+        "Platillo de Sichuan que combina trozos de pollo con cacahuates tostados, cebollín, pimiento y chile seco. Su salsa mezcla notas saladas, ligeramente dulces y avinagradas; el resultado es un salteado aromático con contraste de texturas."
+      ],
+      [
+        "Hot Pot (olla mongola)",
+        168,
+        "Caldo caliente en el que se cocinan carnes, verduras y otros ingredientes.",
+        "Comida para compartir alrededor de una olla con caldo aromático que se mantiene caliente en la mesa. Se agregan ingredientes como verduras, hongos, tofu, fideos y láminas finas de carne, que se cocinan poco a poco y se acompañan con distintas salsas."
+      ],
+      [
+        "Mapo Tofu",
+        132,
+        "Tofu suave en salsa especiada con chile, ajo y carne molida.",
+        "Receta tradicional de Sichuan elaborada con cubos de tofu en una salsa intensa de frijol fermentado, ajo, jengibre y chile. Puede incluir carne molida y cebollín; destaca por su textura sedosa y su sabor profundo, salado y ligeramente picante."
+      ]
+    ],
+    "bebidas": [
+      [
+        "Té verde Longjing",
+        45,
+        "Té verde chino de aroma vegetal, ligero y delicado.",
+        "Conocido también como té del Pozo del Dragón, se prepara con hojas de té verde de la región de Hangzhou. Su infusión es clara y fragante, con notas vegetales y un final suave. Se disfruta caliente para apreciar mejor su aroma."
+      ],
+      [
+        "Bubble Tea (té con leche y perlas)",
+        58,
+        "Té frío con leche y perlas masticables de tapioca.",
+        "Bebida originaria de Taiwán muy popular en distintas regiones de Asia. Combina té preparado, leche o una alternativa vegetal, hielo y perlas de tapioca cocidas. Su atractivo está en el contraste entre la bebida cremosa y las perlas suaves."
+      ],
+      [
+        "Leche de soya (Doujiang)",
+        42,
+        "Bebida vegetal elaborada a partir de granos de soya.",
+        "Se obtiene al remojar, moler y cocinar granos de soya con agua, para después colar la mezcla. Tiene una textura ligera y un sabor suave; puede servirse fría o caliente, sola o ligeramente endulzada."
+      ],
+      [
+        "Jiu Niang (sopa dulce de arroz fermentado)",
+        55,
+        "Preparación dulce de arroz fermentado, servida tibia o fría.",
+        "Postre-bebida tradicional elaborado con arroz glutinoso fermentado, que adquiere una textura tierna y un aroma característico. Se sirve con un poco de su líquido dulce y puede acompañarse con pequeñas bolitas de arroz. La fermentación puede producir trazas de alcohol."
+      ],
+      [
+        "Suanmeitang (bebida de ciruela)",
+        48,
+        "Bebida tradicional agridulce preparada con ciruelas ahumadas.",
+        "Se elabora hirviendo ciruelas negras secas con azúcar y otros ingredientes aromáticos. Se deja enfriar y se sirve con hielo; su sabor combina notas dulces, ácidas y ligeramente ahumadas."
+      ]
+    ],
+    "postres": [
+      [
+        "Pastel de luna (Yue Bing)",
+        69,
+        "Pastel redondo de masa fina con relleno dulce y compacto.",
+        "Dulce tradicional asociado con el Festival de Medio Otoño. Tiene una cubierta delicada y decorada, y un relleno que puede prepararse con pasta de semillas de loto, frijol dulce o una mezcla de nueces. Se corta en porciones pequeñas para compartir."
+      ],
+      [
+        "Tartaleta de huevo (Dan Ta)",
+        60,
+        "Tartaleta crujiente rellena de crema suave de huevo.",
+        "Postre de influencia cantonesa con una base de masa hojaldrada o quebrada y un relleno de huevo, leche y azúcar. Se hornea hasta que la superficie queda ligeramente dorada y el centro conserva una consistencia cremosa."
+      ],
+      [
+        "Bolitas de sésamo (Jian Dui)",
+        62,
+        "Bocaditos fritos de arroz glutinoso cubiertos con sésamo.",
+        "Se preparan con una masa de harina de arroz glutinoso, normalmente rellena de pasta dulce de frijol. Se cubren con semillas de sésamo y se fríen hasta quedar doradas, con exterior crujiente y centro suave."
+      ],
+      [
+        "Brochetas de fruta con caramelo (Tanghulu)",
+        65,
+        "Frutas ensartadas y cubiertas con una capa fina de caramelo crujiente.",
+        "Dulce callejero chino que suele prepararse con frutas pequeñas, como tejocotes chinos o fresas, colocadas en una brocheta. Se bañan en almíbar cocido que al enfriarse forma una cubierta brillante y quebradiza."
+      ],
+      [
+        "Hilos de azúcar (Bobo de Dragón)",
+        58,
+        "Dulce artesanal formado por finos hilos de azúcar estirada.",
+        "Confitería tradicional elaborada al estirar repetidamente una preparación de azúcar hasta convertirla en numerosos filamentos finos. Su textura es ligera y delicada; puede envolver un relleno de frutos secos o semillas."
+      ]
+    ]
+  },
+  "Japón": {
+    "kanji": "日",
+    "principales": [
+      [
+        "Gyoza",
+        128,
+        "Empanadillas japonesas rellenas de carne y verduras, doradas por un lado.",
+        "Las gyoza se elaboran con una lámina delgada de masa que envuelve un relleno de cerdo o verduras, col, ajo y jengibre. Se cocinan primero en sartén para dorar la base y después se terminan con un poco de vapor, logrando una textura crujiente y tierna."
+      ],
+      [
+        "Sushi y sashimi",
+        185,
+        "Arroz sazonado acompañado de pescado, mariscos o vegetales frescos.",
+        "El sushi combina arroz avinagrado con ingredientes como pescado, mariscos, pepino o aguacate, en piezas enrolladas o formadas a mano. El sashimi consiste en cortes finos de pescado o marisco servidos sin arroz, resaltando su sabor y textura natural."
+      ],
+      [
+        "Ramen",
+        156,
+        "Sopa japonesa de fideos servida en un caldo sabroso con distintos acompañamientos.",
+        "Este plato reúne fideos de trigo en un caldo que puede prepararse a base de soya, miso o huesos cocidos. Se acompaña comúnmente con huevo, cebollín, alga nori, brotes y rebanadas de carne, formando una comida completa y reconfortante."
+      ],
+      [
+        "Tempura",
+        142,
+        "Verduras o mariscos cubiertos con una capa ligera y crujiente.",
+        "Los ingredientes se pasan por una mezcla fría y ligera de harina, agua y huevo, y se fríen brevemente para conservar su textura. Se sirven recién hechos, a menudo con una salsa suave para acompañar sin ocultar el sabor del ingrediente principal."
+      ],
+      [
+        "Tonkatsu",
+        159,
+        "Filete de cerdo empanizado con panko y frito hasta quedar dorado.",
+        "El tonkatsu se prepara con una chuleta de cerdo cubierta con harina, huevo y pan rallado japonés llamado panko. Se fríe hasta obtener una costra crujiente y se corta en tiras; suele servirse con col finamente rebanada y salsa tonkatsu."
+      ],
+      [
+        "Okonomiyaki",
+        142,
+        "Tortilla japonesa salada con col, masa y diversos ingredientes.",
+        "Su nombre alude a preparar la mezcla al gusto. La base combina col picada con una masa ligera y puede llevar huevo, verduras, carne o mariscos. Se cocina en plancha y se termina con salsa especial, mayonesa japonesa y hojuelas de bonito."
+      ]
+    ],
+    "bebidas": [
+      [
+        "Té verde matcha",
+        58,
+        "Té japonés de hojas molidas, con sabor vegetal intenso.",
+        "El matcha se obtiene al moler finamente hojas de té verde cultivadas a la sombra. El polvo se bate con agua caliente hasta formar una bebida uniforme y ligeramente espumosa. Tiene un color verde vivo y un sabor vegetal característico."
+      ],
+      [
+        "Mugicha (té de cebada)",
+        43,
+        "Infusión de cebada tostada, refrescante y sin cafeína de té.",
+        "Se prepara hirviendo o dejando reposar cebada tostada en agua. Su sabor recuerda a los cereales tostados y puede servirse caliente o frío, especialmente como bebida cotidiana para acompañar las comidas."
+      ],
+      [
+        "Calpis",
+        52,
+        "Bebida láctea japonesa, dulce y ligeramente ácida.",
+        "Es una bebida de sabor suave elaborada a partir de una base láctea fermentada y diluida con agua. Se sirve fría y ofrece un equilibrio entre dulzor y acidez; también puede mezclarse con agua mineral."
+      ],
+      [
+        "Melon Soda",
+        59,
+        "Refresco gasificado de sabor a melón y color verde brillante.",
+        "Bebida popular en cafeterías japonesas, reconocible por su sabor dulce a melón y sus burbujas. Se sirve bien fría y, en algunas presentaciones, se acompaña con una bola de helado de vainilla."
+      ]
+    ],
+    "postres": [
+      [
+        "Mochi",
+        65,
+        "Dulce de arroz glutinoso con una textura suave y elástica.",
+        "Se prepara golpeando o amasando arroz glutinoso cocido hasta obtener una pasta flexible. Puede servirse sencillo o relleno de anko, una pasta dulce de frijol rojo, fruta o crema. Su textura elástica es una de sus características principales."
+      ],
+      [
+        "Dorayaki",
+        62,
+        "Dos panecillos esponjosos unidos por un relleno dulce de frijol rojo.",
+        "Consiste en dos pequeñas piezas de bizcocho cocidas en sartén, parecidas a hot cakes, que encierran una capa de anko. La combinación de pan suave y relleno dulce lo convierte en un postre clásico para acompañar el té."
+      ],
+      [
+        "Taiyaki",
+        68,
+        "Pastel con forma de pez, normalmente relleno de pasta dulce.",
+        "Se cocina en un molde metálico con forma de pez usando una masa similar a la de un panqueque. El relleno tradicional es anko, aunque existen versiones con crema pastelera o chocolate; se sirve tibio, con exterior ligeramente crujiente."
+      ],
+      [
+        "Dango",
+        60,
+        "Pequeñas bolitas de arroz ensartadas en brochetas.",
+        "Estas bolitas se elaboran con harina de arroz y agua, se cuecen y se colocan en pequeñas brochetas. Pueden servirse simples o cubiertas con una salsa dulce de soya, jarabe o pasta de frijol, según la variedad."
+      ],
+      [
+        "Helado de sésamo negro",
+        63,
+        "Helado cremoso con el sabor tostado y profundo del sésamo negro.",
+        "Se prepara incorporando pasta o semillas molidas de sésamo negro a una base cremosa. Su color oscuro y su aroma tostado lo distinguen de otros helados; ofrece un dulzor moderado y un sabor parecido al de las nueces."
+      ]
+    ]
+  },
+  "Corea": {
+    "kanji": "韓",
+    "principales": [
+      [
+        "Kimchi",
+        95,
+        "Col fermentada y sazonada con chile, ajo y otros condimentos.",
+        "Acompañamiento emblemático de Corea elaborado principalmente con col napa o rábano. Las verduras se salan y se mezclan con una pasta de chile, ajo, jengibre y otros ingredientes antes de fermentar. Tiene un sabor ácido, salado y especiado."
+      ],
+      [
+        "Bibimbap",
+        154,
+        "Tazón de arroz con verduras, huevo, carne y salsa gochujang.",
+        "Se sirve en un tazón con arroz caliente cubierto por verduras preparadas por separado, carne marinada, huevo y semillas de sésamo. Antes de comerlo se mezcla con gochujang, una pasta coreana de chile fermentado que aporta sabor y color."
+      ],
+      [
+        "Bulgogi",
+        176,
+        "Finas láminas de carne marinada y cocinada a la parrilla o sartén.",
+        "La carne se corta en láminas delgadas y se marina con salsa de soya, ajo, azúcar, aceite de sésamo y, en ocasiones, pera. Después se cocina rápidamente para conservar su jugosidad y se sirve con arroz o vegetales."
+      ],
+      [
+        "Tteokbokki",
+        125,
+        "Pasteles de arroz masticables cocinados en salsa roja picante.",
+        "Este popular antojito callejero se prepara con cilindros de arroz llamados tteok, cocidos en una salsa de gochujang, ajo y otros condimentos. La salsa queda espesa y sabrosa; puede incluir pastel de pescado y cebollín."
+      ],
+      [
+        "Pollo frito coreano",
+        159,
+        "Piezas de pollo crujientes cubiertas con salsa dulce, salada o picante.",
+        "El pollo se fríe para conseguir una cubierta muy crujiente y después puede mezclarse con una salsa de ajo, soya, miel o chile. Se sirve en piezas para compartir y suele acompañarse con rábano encurtido."
+      ],
+      [
+        "Gimbap",
+        138,
+        "Rollos de arroz y vegetales envueltos en alga marina.",
+        "Se prepara extendiendo arroz sazonado sobre una hoja de alga gim y agregando ingredientes como zanahoria, pepino, huevo y otros rellenos. Se enrolla firmemente y se corta en piezas pequeñas para servir."
+      ]
+    ],
+    "bebidas": [
+      [
+        "Sikhye",
+        49,
+        "Bebida dulce tradicional preparada con arroz y malta.",
+        "Se elabora infusionando malta de cebada para obtener enzimas que convierten parte del almidón del arroz en azúcares. Se sirve fría, con granos de arroz flotando y un sabor suave y dulce."
+      ],
+      [
+        "Sujeonggwa",
+        52,
+        "Infusión fría de canela y jengibre, aromática y especiada.",
+        "Esta bebida tradicional se prepara hirviendo canela y jengibre en agua; suele endulzarse y servirse fría. A veces se acompaña con piñones y ofrece un aroma cálido con un toque ligeramente picante."
+      ],
+      [
+        "Banana Milk (leche de plátano)",
+        55,
+        "Bebida láctea dulce con sabor suave a plátano.",
+        "Inspirada en una bebida muy popular en Corea, combina leche con sabor a plátano y una textura ligera. Se disfruta fría y es conocida por su perfil dulce y cremoso."
+      ],
+      [
+        "Yuja-cha (té de cidra coreana)",
+        54,
+        "Infusión dulce y cítrica preparada con yuja y agua caliente.",
+        "Se prepara mezclando yuja, una fruta cítrica aromática, con miel o azúcar para formar una conserva. Una porción se disuelve en agua caliente y se sirve como bebida reconfortante."
+      ]
+    ],
+    "postres": [
+      [
+        "Bingsu",
+        82,
+        "Hielo finamente raspado con leche, fruta y distintos toppings.",
+        "Postre coreano servido en un tazón grande, preparado con hielo de textura muy fina y leche o leche condensada. Puede cubrirse con fruta, frijol rojo dulce, mochi, cereal o jarabes, creando una mezcla fresca y cremosa."
+      ],
+      [
+        "Hotteok",
+        64,
+        "Panqueque relleno de azúcar morena, canela y nueces.",
+        "La masa se rellena con una mezcla de azúcar morena, canela y frutos secos, y se cocina en una plancha con un poco de aceite. Al calentarse, el relleno se derrite y forma un centro dulce y aromático."
+      ],
+      [
+        "Yakgwa",
+        60,
+        "Galleta tradicional frita y bañada en jarabe de miel.",
+        "Se prepara con harina, aceite de sésamo y miel, se moldea y se fríe antes de bañarse en un jarabe dulce. Tiene una textura tierna y compacta, con notas de miel y jengibre."
+      ],
+      [
+        "Gyeongdan",
+        67,
+        "Bolitas de arroz glutinoso cubiertas con polvo de frijol o sésamo.",
+        "Pequeños dulces redondos elaborados con harina de arroz glutinoso. Se cuecen en agua y se cubren con ingredientes como polvo de frijol tostado, sésamo o coco, que aportan sabor y textura."
+      ],
+      [
+        "Bungeo-ppang",
+        62,
+        "Panecillo horneado con forma de pez y relleno dulce.",
+        "Es un antojito coreano preparado en un molde con forma de pez. La masa se hornea alrededor de un relleno tradicional de pasta dulce de frijol rojo, aunque también existen versiones con crema; se sirve caliente."
+      ]
+    ]
+  },
+  "Tailandia": {
+    "kanji": "泰",
+    "principales": [
+      [
+        "Pad Thai",
+        148,
+        "Fideos de arroz salteados con tamarindo, huevo, verduras y cacahuate.",
+        "Uno de los platos tailandeses más conocidos. Los fideos de arroz se saltean en un wok con huevo, tofu o camarón, brotes de soya y una salsa equilibrada de tamarindo, pescado y azúcar. Se termina con cacahuate triturado y limón."
+      ],
+      [
+        "Tom Yum Goong",
+        145,
+        "Sopa picante y ácida de camarones con hierbas aromáticas.",
+        "Caldo tailandés de aroma intenso preparado con hierba limón, galanga, hojas de lima kaffir y chile. Se añaden camarones y, según la versión, hongos y jugo de limón, creando un contraste fresco, ácido y picante."
+      ],
+      [
+        "Curry verde",
+        162,
+        "Curry aromático con leche de coco, pasta verde y verduras.",
+        "Se prepara con pasta de curry verde elaborada con chiles verdes y hierbas, cocinada con leche de coco. Puede incluir pollo, berenjena, albahaca tailandesa y otros vegetales; se sirve normalmente acompañado de arroz."
+      ],
+      [
+        "Som Tum",
+        139,
+        "Ensalada fresca de papaya verde machacada con limón y chile.",
+        "Platillo originario del noreste de Tailandia que combina papaya verde rallada, tomate, ejotes, limón, chile y cacahuate. Los ingredientes se machacan suavemente en un mortero para integrar sus sabores dulces, ácidos, salados y picantes."
+      ],
+      [
+        "Massaman Curry",
+        168,
+        "Curry suave y especiado con leche de coco, papa y cacahuate.",
+        "Curry tailandés de influencia multicultural, preparado con una pasta aromática que puede incluir canela, cardamomo y otras especias. Se cocina lentamente con leche de coco, papa y carne o verduras, y suele acompañarse con arroz."
+      ]
+    ],
+    "bebidas": [
+      [
+        "Cha Yen (té tailandés)",
+        59,
+        "Té negro especiado con leche y servido con hielo.",
+        "Se prepara con té negro fuerte y especias aromáticas; después se mezcla con leche condensada o evaporada y se sirve sobre hielo. Tiene un color anaranjado característico y un sabor dulce y cremoso."
+      ],
+      [
+        "Oliang (café tailandés)",
+        55,
+        "Café helado de sabor tostado, preparado al estilo tailandés.",
+        "Bebida tradicional elaborada con una mezcla de café y granos tostados, que pueden incluir cereales o semillas. Se infusiona y se sirve fría, con hielo y, si se desea, un toque de azúcar."
+      ],
+      [
+        "Nam Matoom (bebida de bael)",
+        52,
+        "Infusión refrescante de fruta bael, de sabor suave y aromático.",
+        "Se prepara con la pulpa o rodajas secas de la fruta bael, que se infusionan en agua caliente. Una vez enfriada puede endulzarse ligeramente y servirse con hielo; su sabor es frutal y delicado."
+      ],
+      [
+        "Agua de coco",
+        55,
+        "Agua natural de coco, ligera y refrescante.",
+        "Se obtiene del interior del coco joven y se sirve fría para disfrutar su sabor suave y ligeramente dulce. Es una bebida sencilla que acompaña bien los platillos especiados."
+      ],
+      [
+        "Nam Krajeab (agua de jamaica tailandesa)",
+        48,
+        "Bebida de flor de roselle con un toque ácido y dulce.",
+        "Se elabora hirviendo cálices secos de roselle, conocidos también como jamaica, para obtener una infusión de color rojo intenso. Se deja enfriar y se sirve con hielo, a menudo con un poco de azúcar."
+      ]
+    ],
+    "postres": [
+      [
+        "Mango Sticky Rice",
+        79,
+        "Arroz glutinoso con leche de coco y mango fresco.",
+        "Postre tailandés que combina arroz glutinoso cocido al vapor con una mezcla dulce de leche de coco y sal. Se sirve junto a rebanadas de mango maduro y, en ocasiones, se termina con semillas tostadas o salsa adicional de coco."
+      ],
+      [
+        "Khanom Krok",
+        65,
+        "Pequeños pastelitos de coco con exterior dorado y centro suave.",
+        "Se preparan con una mezcla de harina de arroz y leche de coco, cocinada en una plancha especial de cavidades redondas. Pueden llevar cebollín o maíz en versiones saladas y suelen servirse recién hechos."
+      ],
+      [
+        "Thong Yip",
+        73,
+        "Dulce dorado de yema de huevo cocida en almíbar.",
+        "Postre tradicional tailandés de textura delicada, elaborado con yemas batidas que se cocinan cuidadosamente en un jarabe dulce y se pliegan en forma de flor. Su color dorado lo relaciona con celebraciones y ocasiones especiales."
+      ],
+      [
+        "Khanom Chan",
+        65,
+        "Pastel de coco y harina de arroz formado por capas suaves.",
+        "Dulce tradicional preparado con harina de arroz, almidón de tapioca, azúcar y leche de coco. La mezcla se cocina al vapor en capas sucesivas, creando una textura elástica y un aspecto de varios colores."
+      ],
+      [
+        "Helado de coco en cáscara natural",
+        69,
+        "Helado de coco servido dentro de una cáscara de coco.",
+        "Postre frío elaborado con leche y crema de coco, servido en media cáscara natural. Puede acompañarse con cacahuates, maíz dulce o trocitos de fruta, según la presentación."
+      ]
+    ]
+  },
+  "Vietnam": {
+    "kanji": "越",
+    "principales": [
+      [
+        "Pho",
+        158,
+        "Sopa de fideos de arroz con caldo aromático, res y hierbas frescas.",
+        "Sopa vietnamita cuyo caldo se cocina lentamente con especias como anís estrellado, canela y jengibre. Se sirve con fideos de arroz y rebanadas de res, además de brotes, albahaca, cilantro y limón para ajustar el sabor."
+      ],
+      [
+        "Banh Mi",
+        126,
+        "Baguette crujiente rellena de carne, verduras encurtidas y cilantro.",
+        "Sándwich vietnamita preparado con una baguette de corteza crujiente y miga ligera. Se rellena con carnes sazonadas, paté o tofu, zanahoria y daikon encurtidos, pepino, cilantro y una salsa suave."
+      ],
+      [
+        "Goi Cuon",
+        119,
+        "Rollitos frescos de papel de arroz con verduras, fideos y camarón.",
+        "También conocidos como rollitos de verano, se preparan envolviendo en papel de arroz camarones, hierbas frescas, lechuga y fideos vermicelli. Se sirven fríos y suelen acompañarse con una salsa de cacahuate o de pescado."
+      ],
+      [
+        "Bun Cha",
+        152,
+        "Cerdo a la parrilla servido con fideos de arroz y hierbas frescas.",
+        "Especialidad de Hanói que combina piezas o pequeñas tortitas de cerdo asado con fideos de arroz. Se acompaña con un caldo ligero agridulce, hierbas aromáticas y verduras frescas para mezclar al gusto."
+      ],
+      [
+        "Banh Xeo",
+        145,
+        "Crepa vietnamita crujiente rellena de verduras y otros ingredientes.",
+        "Crepa fina de color amarillo preparada con harina de arroz, cúrcuma y leche de coco o agua. Se cocina en sartén hasta quedar crujiente y se rellena con brotes de soya, verduras y, según la versión, camarón o cerdo."
+      ]
+    ],
+    "bebidas": [
+      [
+        "Ca Phe Sua Da (café con leche)",
+        58,
+        "Café vietnamita frío con leche condensada y hielo.",
+        "Se prepara con café fuerte filtrado lentamente, tradicionalmente con un filtro metálico individual, y se mezcla con leche condensada. Se vierte sobre hielo para obtener una bebida intensa, dulce y cremosa."
+      ],
+      [
+        "Ca Phe Trung (café con huevo)",
+        65,
+        "Café intenso coronado con una crema espesa de huevo batido.",
+        "Especialidad de Hanói que combina café vietnamita fuerte con una crema preparada al batir yemas de huevo con azúcar y leche condensada. La capa superior es suave y aireada, y contrasta con el sabor tostado del café."
+      ],
+      [
+        "Nuoc Mia (jugo de caña)",
+        52,
+        "Jugo fresco extraído de la caña de azúcar, servido frío.",
+        "Se obtiene al prensar tallos de caña para extraer su jugo natural. Se sirve con hielo y, en algunas versiones, con un poco de limón o kumquat para aportar frescura y equilibrar el dulzor."
+      ],
+      [
+        "Tra Da (té helado)",
+        49,
+        "Té ligero servido frío, una bebida cotidiana en Vietnam.",
+        "Se prepara con té verde o té negro de infusión suave y se deja enfriar antes de servirse con hielo. Su sabor es sencillo y refrescante, ideal para acompañar comidas."
+      ],
+      [
+        "Ca phe sua da (café vietnamita con leche)",
+        58,
+        "Café intenso servido con leche condensada y hielo.",
+        "Se prepara tradicionalmente con café filtrado lentamente en un filtro metálico vietnamita. Se mezcla con leche condensada y se sirve sobre hielo, logrando una bebida de sabor profundo y dulce."
+      ]
+    ],
+    "postres": [
+      [
+        "Che Ba Mau",
+        72,
+        "Postre de tres colores con frijoles, gelatina, hielo y leche de coco.",
+        "Postre vietnamita servido en vaso o tazón, compuesto por capas de frijoles dulces, gelatina de colores, hielo triturado y leche de coco. Se mezcla antes de comer para combinar sus texturas y sabores."
+      ],
+      [
+        "Banh Cam",
+        63,
+        "Bolita de arroz glutinoso frita, cubierta de sésamo y rellena.",
+        "Dulce redondo elaborado con una masa de arroz glutinoso y arroz común, rellena tradicionalmente de pasta de frijol mungo. Se cubre con semillas de sésamo y se fríe hasta quedar dorada y crujiente."
+      ],
+      [
+        "Banh Chuoi",
+        69,
+        "Pastel o budín de plátano con leche de coco.",
+        "Postre casero preparado con plátano maduro, harina o pan, azúcar y leche de coco. Se hornea o cocina hasta obtener una textura húmeda y compacta, con un aroma dulce a fruta."
+      ],
+      [
+        "Banh Da Lon",
+        68,
+        "Pastel vietnamita de capas suaves elaborado con arroz y coco.",
+        "Se cocina al vapor en capas de colores, utilizando harina de arroz, almidón de tapioca, azúcar y leche de coco. Su textura es elástica y ligeramente pegajosa, y cada capa aporta un sabor delicado."
+      ],
+      [
+        "Sua Chua Nep Cam",
+        70,
+        "Yogur acompañado de arroz negro glutinoso fermentado y dulce.",
+        "Postre fresco que combina yogur natural con arroz glutinoso negro cocido y fermentado, de textura tierna y sabor ligeramente ácido. La mezcla ofrece un contraste entre la cremosidad del yogur y el arroz dulce."
+      ]
+    ]
+  }
+};
+
+    let productos = [];
+    let carrito = [];
+    // IMÁGENES DE PRODUCTOS: pega aquí el enlace directo de cada imagen.
+    // Usa el ID del producto como clave. Ejemplo: 1: "https://sitio.com/imagen.jpg"
+    // Este apartado pertenece al código y no se muestra en la página.
+    
+const imagenesProductos = {
+      ...JSON.parse(localStorage.getItem("nekoImagenesProductos") || "{}"),
+
+        //CHINA
+1: "patolaqueado-china.jpg",
+2: "dumplings-china.jpg",
+3: "pollo-kung-pao-china.jpg",
+4:"hot-pot-china.jpg",    
+5: "mapo-tofu-china.jpg",
+6:"te-verde-china.jpg",
+7:"Bubble-Milk-china.jpg",
+8:"leche-soya-china.jpg",
+9:"sopadearroz-china.jpg",
+10:"suanmeitang-china.jpg",
+11:"mooncake-china.jpg",
+12:"tartaleta-china.jpg",
+13:"bolas-sesamo-china.jpg",
+14:"tanghulu-china.jpg",
+15:"baba-dragon-china.jpg",
+
+//JAPON
+
+16:"gyoza-japon.jpg",
+17:"sushi-japon.jpg",
+18:"ramen-japon.jpg",
+19:"tempura-japon.jpg",
+20:"tonkatsu-japon.jpg",
+21:"okonomiyaki-japon.jpg",
+22:"te verde-japon.jpg",
+23:"mugicha-japon.jpg",
+24:"calpis-japon.jpg",
+25:"lemonsoda-japon.png",
+26:"mochi-japon.jpg",
+27:"dorayaki-japon.jpg",
+28:"taiyaki-japon.jpg",
+29:"dango-japon.jpg",
+30:"helado-japon.jpg",
+
+//COREA
+
+31:"kimchi-corea.jpg",
+32:"bibimbap-corea.jpg",
+33:"bulgogi-corea.jpg",
+34:"tteokbokki-corea.jpg",
+35:"pollo-corea.jpg",
+36:"gimbap-corea.jpg",
+37:"sikhye-corea.jpg",
+38:"sujeonggwa-corea.jpg",
+39:"banana-milk-corea.jpg",
+40:"yujacha-corean.jpg",
+41:"bingsu-corea.jpg",
+42:"hotteok-corea.jpg",
+43:"yakwa-corea.jpg",
+44:"gyeongdan-corea.jpg",
+45:"bungo-corea.jpg",
+
+//TAILANDIA
+
+46:"pad-thai-tailandia.jpg",
+47:"tom-yum-goong-tailandia.jpg",
+48:"curry-tailandia.jpg",
+49:"som-tum-tailandia.jpg",
+50:"massamon-curry-tailandia.jpg",
+51:"cha-yen-tailandia.jpg",
+52:"oliang-tailandia.jpg",
+53:"nam-matoom-tailandia.jpg",
+54:"agua-tailandia.jpg",
+55:"krajeab-tailandia.png",
+56:"sticky-mango-rice-tailandia.jpg",
+57:"khanom-krok-tailandia.jpg",
+58:"thong-tailandia.png",
+59:"khanom-chan-tailandia.jpg",
+60:"helado-tailandia.jpg",
+
+//VIETNAM
+
+61:"pho-vietnam.jpg",
+62:"banh-mi-vietnam.jpg",
+63:"goi-cuon-vietnam.jpg",
+64:"bun-cha-vietnam.jpg",
+65:"banh-xeo-vietnam.png",
+66:"cafe-frio-vietnam.jpg",
+67:"cafe-vietnam.jpg",
+68:"nouc-mia-vietnam.jpg",
+69:"tra-da-vietnam.jpg",
+70:"ca-phe-sua-da-vietnam.jpg",
+71:"che-ba-mau-vietnam.jpg",
+72:"banh-cam-vietnam.jpg",
+73:"banh-chuoi-vietnam.png",
+74:"banh-da-vietnam.jpg",
+75:"sua-chua-vietnam.jpg",
+
+    };
+
+    let perfilNeko = null;
+    let historialNeko = JSON.parse(localStorage.getItem("nekoCompras") || "[]");
+    let categoriaActual = "Japón";
+    let productoActual = null;
+    let codigoActual = "";
+    let pedidoRealizado = false;
+    let temporizadorActivo = null;
+
+    function crearProductos() {
+      let id = 1;
+
+    
+  Object.entries(menus).forEach(([pais, menu]) => {
+        ["principales", "bebidas", "postres"].forEach(tipo => {
+          menu[tipo].forEach(item => {
+            productos.push({
+              id: id++,
+              pais,
+              tipo,
+              nombre: item[0],
+              precio: item[1],
+              descripcion: item[2],
+              descripcionLarga: item[3] ||
+                `${item[0]} es una especialidad representativa de la cocina de ${pais}. ${item[2]}`,
+    stock: Math.floor(Math.random() * 13),
+              icono: 
+                tipo === "principales" ? "🍵" :
+                tipo === "bebidas" ? "🍵" : "🍡",
+              imagen: imagenesProductos[id - 1] || ""
+            });
+          });
+        });
+      });
+    }
+
+    crearProductos();
+
+    function mostrarPantalla(id) {
+      document.querySelectorAll(".pantalla").forEach(pantalla => {
+        pantalla.classList.remove("activa");
+      });
+
+      document.getElementById(id).classList.add("activa");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function obtenerCuentasNeko() {
+      return JSON.parse(localStorage.getItem("nekoCuentas") || "[]");
+    }
+
+    document.getElementById("formLogin").addEventListener("submit", evento => {
+      evento.preventDefault();
+      const identificador = document.getElementById("loginUsuario").value.trim().toLowerCase();
+      const clave = document.getElementById("loginContrasena").value;
+      const cuenta = obtenerCuentasNeko().find(item =>
+        (item.usuario || "").toLowerCase() === identificador ||
+        (item.correo || "").toLowerCase() === identificador
+      );
+      if (!cuenta || cuenta.contrasena !== clave) {
+        alert("No encontramos una cuenta con esos datos. Verifica tu usuario y contraseña o crea una cuenta.");
+        return;
+      }
+      perfilNeko = {
+        nombre: cuenta.nombre,
+        usuario: cuenta.usuario,
+        correo: cuenta.correo,
+        foto: cuenta.foto || ""
+      };
+      localStorage.setItem("nekoPerfil", JSON.stringify(perfilNeko));
+      localStorage.setItem("nekoUsuario", cuenta.correo);
+      actualizarAccesosCuenta();
+      document.getElementById("formLogin").reset();
+      mostrarPantalla("principal");
+    });
+
+    document.getElementById("formRegistro").addEventListener("submit", evento => {
+      evento.preventDefault();
+
+      const clave = document.getElementById("contrasena").value;
+      const confirmacion = document.getElementById("confirmarContrasena").value;
+      if (clave !== confirmacion) {
+        alert("Las contraseñas no coinciden.");
+        return;
+      }
+
+      const correo = document.getElementById("correo").value.trim();
+      const nombre = document.getElementById("nombreCuenta").value.trim();
+      const usuario = document.getElementById("usuarioCuenta").value.trim();
+      const cuentas = obtenerCuentasNeko();
+
+      if (cuentas.some(item => item.correo.toLowerCase() === correo.toLowerCase())) {
+        alert("Ya existe una cuenta registrada con ese correo.");
+        return;
+      }
+      if (cuentas.some(item => item.usuario.toLowerCase() === usuario.toLowerCase())) {
+        alert("Ese nombre de usuario ya está en uso. Elige otro.");
+        return;
+      }
+
+      const nuevaCuenta = { nombre, usuario, correo, contrasena: clave, foto: "" };
+      cuentas.push(nuevaCuenta);
+      localStorage.setItem("nekoCuentas", JSON.stringify(cuentas));
+      perfilNeko = { nombre, usuario, correo, foto: "" };
+      localStorage.setItem("nekoUsuario", correo);
+      localStorage.setItem("nekoPerfil", JSON.stringify(perfilNeko));
+      actualizarAccesosCuenta();
+      document.getElementById("formRegistro").reset();
+      alert("¡Tu cuenta se creó correctamente!");
+      mostrarPantalla("principal");
+    });
+
+    function actualizarAccesosCuenta() {
+      if (!perfilNeko) return;
+      const botonCuenta = document.querySelector('.acciones-superiores button[title="Mi cuenta"]');
+      if (botonCuenta) {
+        botonCuenta.innerHTML = `<span>👤</span> ${escaparHTML(perfilNeko.nombre || "Mi cuenta")}`;
+      }
+    }
+
+    function escaparHTML(valor) {
+      return String(valor ?? "").replace(/[&<>"']/g, caracter => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[caracter]));
+    }
+
+    function abrirCuenta() {
+      if (!perfilNeko) {
+        alert("Inicia sesión para consultar tu perfil.");
+        mostrarPantalla("bienvenida");
+        return;
+      }
+      document.getElementById("editarNombreCuenta").value = perfilNeko.nombre || "";
+      document.getElementById("correoCuenta").value = perfilNeko.correo || "";
+      document.getElementById("fotoPerfil").src = perfilNeko.foto || document.getElementById("fotoPerfil").src;
+      renderHistorialCompras();
+      mostrarPantalla("cuenta");
+    }
+
+    function guardarPerfil() {
+      const nombre = document.getElementById("editarNombreCuenta").value.trim();
+      if (!nombre) {
+        alert("Escribe un nombre para tu cuenta.");
+        return;
+      }
+      perfilNeko = { ...(perfilNeko || {}), nombre };
+      localStorage.setItem("nekoPerfil", JSON.stringify(perfilNeko));
+      actualizarAccesosCuenta();
+      alert("Tu perfil se actualizó correctamente.");
+    }
+
+    document.getElementById("subirFotoPerfil").addEventListener("change", evento => {
+      const archivo = evento.target.files && evento.target.files[0];
+      if (!archivo) return;
+      if (!archivo.type.startsWith("image/")) {
+        alert("Selecciona un archivo de imagen.");
+        evento.target.value = "";
+        return;
+      }
+      const lector = new FileReader();
+      lector.onload = () => {
+        const imagen = new Image();
+        imagen.onload = () => {
+          const lienzo = document.createElement("canvas");
+          const escala = Math.min(1, 400 / Math.max(imagen.width, imagen.height));
+          lienzo.width = Math.round(imagen.width * escala);
+          lienzo.height = Math.round(imagen.height * escala);
+          lienzo.getContext("2d").drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+          const foto = lienzo.toDataURL("image/jpeg", 0.82);
+          perfilNeko = { ...(perfilNeko || {}), foto };
+          document.getElementById("fotoPerfil").src = foto;
+          localStorage.setItem("nekoPerfil", JSON.stringify(perfilNeko));
+        };
+        imagen.src = lector.result;
+      };
+      lector.readAsDataURL(archivo);
+    });
+
+    function renderHistorialCompras() {
+      const contenedor = document.getElementById("historialCompras");
+      if (!historialNeko.length) {
+        contenedor.innerHTML = '<div class="mensaje-vacio">Todavía no has realizado compras.</div>';
+        return;
+      }
+      contenedor.innerHTML = historialNeko.slice().reverse().map(compra => `
+        <article class="compra-historica">
+          <h4>Pedido ${escaparHTML(compra.folio)}</h4>
+          <p><strong>Fecha:</strong> ${escaparHTML(compra.fecha)}</p>
+          <p><strong>Productos:</strong> ${compra.items.map(item =>
+            `${escaparHTML(item.nombre)} × ${item.cantidad}`
+          ).join(", ")}</p>
+          <p><strong>Total:</strong> $${Number(compra.total).toFixed(2)} MXN</p>
+          <span class="estado-compra">Compra completada</span>
+        </article>
+      `).join("");
+    }
+
+    function abrirCategoria(pais) {
+      categoriaActual = pais;
+      document.getElementById("tituloCatalogo").textContent =
+        `Cocina de ${pais}`;
+
+      renderCatalogo(
+        productos.filter(producto => producto.pais === pais)
+      );
+
+      mostrarPantalla("catalogo");
+    }
+
+    function renderCatalogo(lista) {
+      const contenedor = document.getElementById("contenidoCatalogo");
+      contenedor.innerHTML = "";
+
+      const secciones = [
+        ["principales", "Platillos principales"],
+        ["bebidas", "Bebidas"],
+        ["postres", "Postres"]
+      ];
+
+      secciones.forEach(([tipo, titulo]) => {
+        const filtrados = lista.filter(producto => producto.tipo === tipo);
+
+        if (!filtrados.length) return;
+
+        const encabezado = document.createElement("h3");
+        encabezado.className = "subtitulo-catalogo";
+        encabezado.textContent = titulo;
+        contenedor.appendChild(encabezado);
+
+        const rejilla = document.createElement("div");
+        rejilla.className = "productos";
+
+        filtrados.forEach(producto => {
+          rejilla.innerHTML += tarjetaProducto(producto);
+        });
+
+        contenedor.appendChild(rejilla);
+      });
+
+      if (!lista.length) {
+        contenedor.innerHTML =
+          `<div class="mensaje-vacio">No se encontraron productos.</div>`;
+      }
+    }
+
+    function tarjetaProducto(producto) {
+      const imagen = producto.imagen
+        ? `<img src="${producto.imagen}" alt="${producto.nombre}">`
+        : producto.icono;
+
+      return `
+        <article class="producto">
+          <div class="producto-imagen">${imagen}</div>
+          <div class="producto-info">
+            <h4>${producto.nombre}</h4>
+            <p>${producto.descripcion}</p>
+            <span class="precio">$${producto.precio.toFixed(2)} MXN</span>
+            <div class="producto-acciones">
+              <button class="boton secundario" onclick="verProducto(${producto.id})">
+                Ver detalles
+              </button>
+              <button class="boton" onclick="agregarAlCarrito(${producto.id}, false)"
+                ${producto.stock <= 0 ? "disabled" : ""}>
+                Agregar al carrito
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function verProducto(id) {
+      productoActual = productos.find(producto => producto.id === id);
+
+      const estado = productoActual.stock > 0
+        ? `<span class="existencia">
+             ${productoActual.stock} unidades disponibles
+           </span>`
+        : `<span class="existencia agotado">Producto agotado</span>`;
+
+      const imagen = productoActual.imagen
+        ? `<img src="${productoActual.imagen}" alt="${productoActual.nombre}">`
+        : productoActual.icono;
+
+      document.getElementById("detalleContenido").innerHTML = `
+        <div class="detalle">
+          <div class="detalle-imagen">${imagen}</div>
+
+          <div>
+            <small>
+              ${productoActual.pais} · ${nombreTipo(productoActual.tipo)}
+            </small>
+
+            <h2>${productoActual.nombre}</h2>
+            ${estado}
+
+            <p class="detalle-descripcion">
+              ${productoActual.descripcionLarga}
+            </p>
+
+            <span class="precio">
+              $${productoActual.precio.toFixed(2)} MXN
+            </span>
+
+            ${productoActual.tipo === "principales" ? `
+              <div class="opciones">
+                <div>
+                  <label for="opcionSabor">Opción de sabor</label>
+                  <select id="opcionSabor">
+                    <option>Tradicional</option>
+                    <option>Picante suave</option>
+                    <option>Picante intenso</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="acompanamiento">Acompañamiento</label>
+                  <select id="acompanamiento">
+                    <option>Sin acompañamiento</option>
+                    <option>Arroz al vapor + $25</option>
+                    <option>Ensalada oriental + $30</option>
+                  </select>
+                </div>
+              </div>
+            ` : ""}
+
+            <div class="detalle-botones">
+              <button
+                class="boton"
+                onclick="agregarAlCarrito(${productoActual.id}, false)"
+                ${productoActual.stock === 0 ? "disabled" : ""}
+              >
+                Agregar al carrito
+              </button>
+
+              <button
+                class="boton secundario"
+                onclick="agregarAlCarrito(${productoActual.id}, true)"
+                ${productoActual.stock === 0 ? "disabled" : ""}
+              >
+                Comprar ahora
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      mostrarPantalla("detalleProducto");
+    }
+
+    function nombreTipo(tipo) {
+      if (tipo === "principales") return "Platillo principal";
+      if (tipo === "bebidas") return "Bebida";
+      return "Postre";
+    }
+
+    function agregarAlCarrito(id, comprarAhora) {
+      const producto = productos.find(item => item.id === id);
+
+      if (producto.stock <= 0) {
+        alert("Este producto se encuentra agotado.");
+        return;
+      }
+
+      const existente = carrito.find(item => item.id === id);
+
+      if (existente) {
+        if (existente.cantidad < producto.stock) {
+          existente.cantidad++;
+        } else {
+          alert("No hay más unidades disponibles.");
+          return;
+        }
+      } else {
+        carrito.push({ ...producto, cantidad: 1 });
+      }
+
+      actualizarContador();
+
+      if (comprarAhora) {
+        abrirCarrito();
+      } else {
+        alert("Producto agregado al carrito.");
+      }
+    }
+
+    function actualizarContador() {
+      const total = carrito.reduce(
+        (suma, producto) => suma + producto.cantidad,
+        0
+      );
+
+      document.getElementById("contadorCarrito").textContent = total;
+
+      document.querySelectorAll(".contador-carrito").forEach(elemento => {
+        elemento.textContent = total;
+      });
+    }
+
+    function abrirCarrito() {
+      renderCarrito();
+      mostrarPantalla("carrito");
+    }
+
+    function renderCarrito() {
+      const lista = document.getElementById("listaCarrito");
+      const resumen = document.getElementById("resumenTotales");
+
+      if (!carrito.length) {
+        lista.innerHTML = `
+          <div class="mensaje-vacio">
+            Tu carrito está vacío.
+          </div>
+        `;
+
+        resumen.innerHTML = `
+          <h3>Resumen</h3>
+          <p>Agrega productos para continuar.</p>
+        `;
+        return;
+      }
+
+      lista.innerHTML = carrito.map(producto => {
+        const imagen = producto.imagen
+          ? `<img src="${producto.imagen}" alt="${producto.nombre}">`
+          : producto.icono;
+
+        return `
+          <div class="item-carrito">
+            <div class="miniatura">${imagen}</div>
+
+            <div>
+              <strong>${producto.nombre}</strong>
+              <div>$${producto.precio.toFixed(2)} cada uno</div>
+
+              <div class="cantidad">
+                <button onclick="cambiarCantidad(${producto.id}, -1)">−</button>
+                <span>${producto.cantidad}</span>
+                <button onclick="cambiarCantidad(${producto.id}, 1)">+</button>
+              </div>
+            </div>
+
+            <div>
+              <strong>
+                $${(producto.precio * producto.cantidad).toFixed(2)}
+              </strong>
+              <br>
+              <button
+                class="boton enlace"
+                onclick="quitarProducto(${producto.id})"
+              >
+                Quitar
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const subtotal = calcularSubtotal();
+      const iva = subtotal * 0.16;
+      const total = subtotal + iva;
+
+      resumen.innerHTML = `
+        <h3>Detalles de compra</h3>
+
+        <div class="linea">
+          <span>Productos</span>
+          <span>${carrito.reduce((s, p) => s + p.cantidad, 0)}</span>
+        </div>
+
+        <div class="linea">
+          <span>Precio sin IVA</span>
+          <span>$${subtotal.toFixed(2)}</span>
+        </div>
+
+        <div class="linea">
+          <span>IVA 16%</span>
+          <span>$${iva.toFixed(2)}</span>
+        </div>
+
+        <div class="linea total">
+          <span>Total</span>
+          <span>$${total.toFixed(2)}</span>
+        </div>
+
+        <button class="boton" onclick="continuarEntrega()">
+          Seguir con el proceso de pago
+        </button>
+
+        <button class="boton peligro" onclick="cancelarPedido()">
+          Cancelar pedido y salir
+        </button>
+      `;
+    }
+
+    function calcularSubtotal() {
+      return carrito.reduce(
+        (suma, producto) => suma + producto.precio * producto.cantidad,
+        0
+      );
+    }
+
+    function cambiarCantidad(id, cambio) {
+      const producto = carrito.find(item => item.id === id);
+      const original = productos.find(item => item.id === id);
+
+      producto.cantidad += cambio;
+
+      if (producto.cantidad <= 0) {
+        quitarProducto(id);
+        return;
+      }
+
+      if (producto.cantidad > original.stock) {
+        producto.cantidad = original.stock;
+        alert("No hay más unidades disponibles.");
+      }
+
+      actualizarContador();
+      renderCarrito();
+    }
+
+    function quitarProducto(id) {
+      carrito = carrito.filter(producto => producto.id !== id);
+      actualizarContador();
+      renderCarrito();
+    }
+
+    function cancelarPedido() {
+      if (confirm("¿Deseas cancelar el pedido y vaciar el carrito?")) {
+        carrito = [];
+        actualizarContador();
+        mostrarPantalla("principal");
+      }
+    }
+
+    function continuarEntrega() {
+      if (!carrito.length) {
+        alert("Tu carrito está vacío.");
+        return;
+      }
+
+      mostrarPantalla("datosEntrega");
+    }
+
+    document.getElementById("formEntrega").addEventListener("submit", evento => {
+      evento.preventDefault();
+      mostrarPantalla("pago");
+    });
+
+    function elegirPago(tipo) {
+      document.getElementById("metodoTarjeta")
+        .classList.toggle("seleccionado", tipo === "tarjeta");
+
+      document.getElementById("metodoOxxo")
+        .classList.toggle("seleccionado", tipo === "oxxo");
+
+      document.getElementById("pagoTarjeta")
+        .classList.toggle("visible", tipo === "tarjeta");
+
+      document.getElementById("pagoOxxo")
+        .classList.toggle("visible", tipo === "oxxo");
+
+      if (tipo === "oxxo") {
+        generarPagoOxxo();
+      }
+    }
+
+    document.getElementById("formTarjeta").addEventListener("submit", evento => {
+      evento.preventDefault();
+      completarPedido();
+    });
+
+    function generarPagoOxxo() {
+      codigoActual = "NEKO-" + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById("codigoOxxo").textContent = codigoActual;
+      document.getElementById("confirmarCodigo").value = "";
+
+      const qr = document.getElementById("qr");
+      qr.innerHTML = "";
+
+      for (let i = 0; i < 49; i++) {
+        qr.appendChild(document.createElement("span"));
+      }
+
+      iniciarTemporizador();
+    }
+
+    function iniciarTemporizador() {
+      clearInterval(temporizadorActivo);
+
+      let segundos = 2 * 60 * 60;
+
+      temporizadorActivo = setInterval(() => {
+        segundos--;
+
+        const horas = String(Math.floor(segundos / 3600)).padStart(2, "0");
+        const minutos = String(
+          Math.floor((segundos % 3600) / 60)
+        ).padStart(2, "0");
+        const restante = String(segundos % 60).padStart(2, "0");
+
+        document.getElementById("temporizador").textContent =
+          `${horas}:${minutos}:${restante}`;
+
+        if (segundos <= 0) {
+          clearInterval(temporizadorActivo);
+          alert("El código de pago ha vencido.");
+        }
+      }, 1000);
+    }
+
+    function confirmarOxxo() {
+      const ingresado = document
+        .getElementById("confirmarCodigo")
+        .value
+        .trim()
+        .toUpperCase();
+
+      if (ingresado !== codigoActual) {
+        alert("El código ingresado no coincide.");
+        return;
+      }
+
+      completarPedido();
+    }
+
+    function completarPedido() {
+      clearInterval(temporizadorActivo);
+
+      const subtotalPedido = calcularSubtotal();
+      const totalPedido = subtotalPedido * 1.16;
+      const compra = {
+        folio: "NK-" + Date.now().toString().slice(-8),
+        fecha: new Date().toLocaleString("es-MX"),
+        items: carrito.map(item => ({ nombre: item.nombre, cantidad: item.cantidad, precio: item.precio })),
+        total: totalPedido
+      };
+      historialNeko.push(compra);
+      localStorage.setItem("nekoCompras", JSON.stringify(historialNeko));
+
+      carrito.forEach(itemCarrito => {
+        const producto = productos.find(item => item.id === itemCarrito.id);
+
+        if (producto) {
+          producto.stock = Math.max(
+            0,
+            producto.stock - itemCarrito.cantidad
+          );
+        }
+      });
+
+      pedidoRealizado = true;
+      mostrarPantalla("confirmacion");
+    }
+
+    function finalizarCompra() {
+      carrito = [];
+      actualizarContador();
+      mostrarPantalla("principal");
+    }
+
+    function mostrarSeguimiento() {
+      document.getElementById("textoSeguimiento").textContent =
+        pedidoRealizado
+          ? "Tu pedido fue recibido y está por comenzar su preparación."
+          : "Todavía no tienes un pedido activo.";
+
+      mostrarPantalla("rastreo");
+    }
+
+    document.getElementById("busquedaCatalogo")
+      .addEventListener("input", evento => {
+        const texto = evento.target.value.toLowerCase().trim();
+
+        renderCatalogo(
+          productos.filter(producto =>
+            producto.pais === categoriaActual &&
+            (
+              producto.nombre.toLowerCase().includes(texto) ||
+              producto.descripcion.toLowerCase().includes(texto)
+            )
+          )
+        );
+      });
+
+    document.getElementById("busqueda")
+      .addEventListener("input", evento => {
+        const texto = evento.target.value.toLowerCase().trim();
+        const resultados = document.getElementById("resultadosBusqueda");
+
+        if (!texto) {
+          resultados.innerHTML = "";
+          return;
+        }
+
+        const encontrados = productos.filter(producto =>
+          producto.nombre.toLowerCase().includes(texto) ||
+          producto.pais.toLowerCase().includes(texto) ||
+          producto.descripcion.toLowerCase().includes(texto)
+        );
+
+        resultados.innerHTML = `
+          <h3 class="subtitulo-catalogo">Resultados de búsqueda</h3>
+          <div class="productos">
+            ${encontrados.map(tarjetaProducto).join("")}
+          </div>
+        `;
+
+        if (!encontrados.length) {
+          resultados.innerHTML = `
+            <div class="mensaje-vacio">
+              No se encontraron coincidencias.
+            </div>
+          `;
+        }
+      });
+
+    actualizarAccesosCuenta();
+    actualizarContador();
+  </script>
+</body>
+</html>
